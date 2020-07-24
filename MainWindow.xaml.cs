@@ -26,8 +26,11 @@ namespace albion_avalon
         public MainWindow()
         {
             InitializeComponent();//loads the window
-            TimerManagment Timer = new TimerManagment();//creates a timer
-            Timer.InitializeTimer();//starts the timer
+            if (GlobalVariables.IsInTimerMode) 
+            { 
+                TimerManagment Timer = new TimerManagment();//creates a timer
+                Timer.InitializeTimer();//starts the timer
+            }
             UIUpdater();//loads ui
             Activated += MainWindowActivated;//attaches an eventhandler to the activated event
         }
@@ -35,6 +38,7 @@ namespace albion_avalon
         private void MainWindowActivated(object sender, EventArgs e)
         {
             UIUpdater();//updates the ui
+            if (!GlobalVariables.IsInTimerMode) TimerManagment.UpdateTime();
         }
 
         public void UIUpdater()//call to update the ui
