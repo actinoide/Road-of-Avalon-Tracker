@@ -27,9 +27,8 @@ namespace albion_avalon
         {
             InitializeComponent();//loads the window
             if (GlobalVariables.IsInTimerMode) 
-            { 
-                TimerManagment Timer = new TimerManagment();//creates a timer
-                Timer.InitializeTimer();//starts the timer
+            {
+                GlobalVariables.Timer.InitializeTimer();//starts the timer
             }
             UIUpdater();//loads ui
             Activated += MainWindowActivated;//attaches an eventhandler to the activated event
@@ -44,13 +43,30 @@ namespace albion_avalon
         public void UIUpdater()//call to update the ui
         {
             ListOfZones.Children.Clear();
-            foreach(AlbionZoneDefinition Zone in GlobalVariables.VisitedZones)//goes through all zones
+            foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones)//goes through all zones
             {
-                ListOfZones.Children.Add(new TextBlock { Text = Zone.ZoneName });//gives them each a textbox that lists their name
+                ListOfZones.Children.Add(new TextBlock {Text = Zone.ZoneName });//gives them each a textbox that lists their name
                 foreach(AlbionPortalDefinition Portal in Zone.ConnectedZones)//then goes through all connected portals and lists their info
                 {
-                    ListOfZones.Children.Add(new TextBlock { Text = "   " + Portal.ConnectedZone + "    " + Portal.MinutesTillDecay + "minutes" });
+                    ListOfZones.Children.Add(new TextBlock {Text= "   " + Portal.ConnectedZone + "    " + Portal.MinutesTillDecay + "minutes" });
                 }
+            }
+        }
+
+        private void SwitchUpdateMode(object sender, RoutedEventArgs e)
+        {
+            if (GlobalVariables.IsInTimerMode)
+            {
+                GlobalVariables.IsInTimerMode = false;//if in timer mode the timer gets diposed the button renamed and last update time set to now
+                UpdateModeButton.Content = "switch to timer based update mode";
+                GlobalVariables.Timer.StopTimer();
+                GlobalVariables.LastUpdateTime = DateTime.Now;
+            }
+            else
+            {
+                GlobalVariables.IsInTimerMode = true;//if in update mode the timer gets created and started and the button renamed 
+                UpdateModeButton.Content = "switch to foreground based update mode";
+                GlobalVariables.Timer.InitializeTimer();
             }
         }
 

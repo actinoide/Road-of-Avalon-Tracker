@@ -5,14 +5,19 @@ using System.Timers;
 
 namespace albion_avalon
 {
-    class TimerManagment
+    public class TimerManagment
     {
+        System.Timers.Timer UpdateTimer;
         public void InitializeTimer()
         {
-            System.Timers.Timer UpdateTimer = new System.Timers.Timer(GlobalVariables.TimerInterval);//creates a timer for regular updates
+            UpdateTimer = new System.Timers.Timer(GlobalVariables.TimerInterval);//creates a timer for regular updates
             UpdateTimer.AutoReset = true;//makes timer loop
             UpdateTimer.Elapsed += UpdateTimerEvent;//attaches eventhandler
             UpdateTimer.Start();//starts the timer
+        }
+        public void StopTimer()//method to get read of the timer to release the ressources
+        {
+            UpdateTimer.Dispose();
         }
         private void UpdateTimerEvent(object sender, ElapsedEventArgs e)//eventhandler which is called by the timer
         {

@@ -34,6 +34,7 @@
             <TextBlock Height="20" Text="And Will Decay In:"/>
             <TextBlock Height="20" Text="Sixth Portal Leads To:"/>
             <TextBlock Height="20" Text="And Will Decay In:"/>
+            <Button x:Name="UpdateModeButton" Content="switch to foreground based update mode" Height="20" Click="SwitchUpdateMode"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
             <TextBox Height="20" x:Name="ZoneNameBox"/>
