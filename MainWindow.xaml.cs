@@ -45,12 +45,56 @@ namespace albion_avalon
             ListOfZones.Children.Clear();
             foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones)//goes through all zones
             {
-                ListOfZones.Children.Add(new TextBlock {Text = Zone.ZoneName });//gives them each a textbox that lists their name
+                Button TemporaryZoneButton = new Button { Content = Zone.ZoneName };
+                TemporaryZoneButton.Click += ZoneButtonClick;//creates a button and attaches an eventhandler
+                ListOfZones.Children.Add(TemporaryZoneButton);
                 foreach(AlbionPortalDefinition Portal in Zone.ConnectedZones)//then goes through all connected portals and lists their info
                 {
-                    ListOfZones.Children.Add(new TextBlock {Text= "   " + Portal.ConnectedZone + "    " + Portal.MinutesTillDecay + "minutes" });
+                    Button TemporaryPortalButton = new Button { Content = Portal.ConnectedZone + "     " + Portal.MinutesTillDecay + "minutes", Margin = new Thickness(50, 0, 0, 0) };
+                    TemporaryPortalButton.Click += PortalButtonClick;//creates a button and attaches an eventhandler
+                    ListOfZones.Children.Add(TemporaryPortalButton);
                 }
             }
+        }
+
+        private void PortalButtonClick(object sender, RoutedEventArgs e)
+        {
+            Button Temporary = (Button)sender;//casts sender to button
+            string Content = (string)Temporary.Content;//casts content to string
+            int Counter = 0;
+            foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones.ToList())//goes through visitedzones
+            {
+                foreach (AlbionPortalDefinition Portal in Zone.ConnectedZones.ToList())//then through the portals in each zone
+                {
+                    if(Portal.ConnectedZone + "     " + Portal.MinutesTillDecay + "minutes" == Content)//checks if conent is equal to the values of sender
+                    {
+                        Zone.ConnectedZones.RemoveAt(Counter);//deletes the item from the list if it is
+                        UIUpdater();//updates ui to reflect changes
+                        return;
+                    }
+                    Counter++;
+                }
+                Counter = 0;
+            }
+            UIUpdater();//updates ui to reflect changes
+        }
+
+        private void ZoneButtonClick(object sender, RoutedEventArgs e)
+        {
+            Button Temporary = (Button)sender;//casts sender to button
+            string Content = (string)Temporary.Content;//casts content to string
+            int Counter = 0;//creates counter
+            foreach(AlbionZoneDefinition Zone in GlobalVariables.VisitedZones.ToList())//goes through visitedzones 
+            {
+                if(Zone.ZoneName == Content)//and checks if sender.content is equal to content 
+                {
+                    GlobalVariables.VisitedZones.RemoveAt(Counter);//deletes the item in the list if it is
+                    UIUpdater();//updates ui to reflect changes
+                    return;
+                }
+                Counter++;
+            }
+            UIUpdater();//updates the change to the ui
         }
 
         private void SwitchUpdateMode(object sender, RoutedEventArgs e)
