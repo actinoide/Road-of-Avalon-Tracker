@@ -33,11 +33,13 @@ namespace albion_avalon
                     Portal.MinutesTillDecay -= GlobalVariables.TimerInterval / 60000;//decreases the time until the portal despawns by the apropriate amount
                 }
             }
+            GlobalVariables.LastUpdateTime = DateTime.Now;
         }
-        public static void UpdateTime()
+        public static void UpdateTime(DateTime LastUpdate,List<AlbionZoneDefinition> ZoneDefinitions)
         {
-            TimeSpan Difference = DateTime.Now - GlobalVariables.LastUpdateTime;//callculates the time that passed since the last update
-            foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones)//goes through all saved zones 
+            if (ZoneDefinitions == null) return;
+            TimeSpan Difference = DateTime.Now - LastUpdate;//callculates the time that passed since the last update
+            foreach (AlbionZoneDefinition Zone in ZoneDefinitions)//goes through all saved zones 
             {
                 foreach (AlbionPortalDefinition Portal in Zone.ConnectedZones)//goes through all portals in those zones
                 {
@@ -47,9 +49,9 @@ namespace albion_avalon
                         continue;
                     }
                     Portal.MinutesTillDecay -= Difference.TotalMinutes;//decreases the time until the portal despawns by the apropriate amount
+                    Portal.MinutesTillDecay = Math.Round(Portal.MinutesTillDecay);
                 }
             }
-            GlobalVariables.LastUpdateTime = DateTime.Now;//sets the last update time to now
         }
     }
 }

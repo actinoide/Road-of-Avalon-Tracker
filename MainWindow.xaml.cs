@@ -37,7 +37,11 @@ namespace albion_avalon
         private void MainWindowActivated(object sender, EventArgs e)
         {
             UIUpdater();//updates the ui
-            if (!GlobalVariables.IsInTimerMode) TimerManagment.UpdateTime();
+            if (!GlobalVariables.IsInTimerMode)
+            {
+                TimerManagment.UpdateTime(GlobalVariables.LastUpdateTime,GlobalVariables.VisitedZones);
+                GlobalVariables.LastUpdateTime = DateTime.Now;//sets the last update time to now
+            }
         }
 
         public void UIUpdater()//call to update the ui
@@ -184,6 +188,17 @@ namespace albion_avalon
             CreatedPortal.MinutesTillDecay = CurrentConversion;//adds both the minutes calculated earlier and the string from when the method was called to the definition
             CreatedPortal.ConnectedZone = TargetLocationName;
             return CreatedPortal;//returns the definition
+        }
+
+        private void LoadFromFileButtonClick(object sender, RoutedEventArgs e)
+        {
+            FileAndSerializationMannagment.LoadFromFileAndDeserialize();//loads data from file
+            UIUpdater();//updates ui
+        }
+
+        private void SaveToFileButtonClick(object sender, RoutedEventArgs e)
+        {
+            FileAndSerializationMannagment.SerializeAndSaveToFile();//saves data to file
         }
     }
 }

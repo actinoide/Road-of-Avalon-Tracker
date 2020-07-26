@@ -14,4 +14,9 @@ namespace albion_avalon
         public string ConnectedZone { get; set; }//the name of the zone the portal leads to
         public double MinutesTillDecay { get; set; }//how many more minutes the portal is going to exist before it despawns/gets replaced
     }
+    public class SerializerDataFormat
+    {
+        public DateTime UpdateTime { get; set; }
+        public List<AlbionZoneDefinition> VisitedPlaces { get; set; }
+    }
 }
