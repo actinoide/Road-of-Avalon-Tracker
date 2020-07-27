@@ -28,7 +28,8 @@ namespace albion_avalon
                 return;
             }
             JsonString = JsonSerializer.Serialize(DataToSerialize);//turns the info into json
-            File.WriteAllText(FileName + "/AlbionRoadsData.txt", JsonString);//writes the file at the specified location
+            FileName = FileName + "/" + GlobalVariables.LastUpdateTime.Hour + "_" + GlobalVariables.LastUpdateTime.Minute +"_"+GlobalVariables.LastUpdateTime.Second + "AlbionRoadsData.txt";//adds the name of the file
+            File.WriteAllText(FileName , JsonString);//writes the file at the specified location
         }
         public static void LoadFromFileAndDeserialize()
         {
