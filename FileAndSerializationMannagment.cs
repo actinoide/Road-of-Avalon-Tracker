@@ -46,7 +46,7 @@ namespace albion_avalon
                 return;
             }
             JsonString = File.ReadAllText(FileName);//reads the file
-            SerializerDataFormat DeserializedData = new SerializerDataFormat();//creates objekt for the deserialized data
+            SerializerDataFormat DeserializedData;//creates objekt for the deserialized data
             try
             {
                 DeserializedData = JsonSerializer.Deserialize<SerializerDataFormat>(JsonString);//deserializes the data into the objekt
