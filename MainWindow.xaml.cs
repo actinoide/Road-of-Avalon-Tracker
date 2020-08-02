@@ -26,10 +26,6 @@ namespace albion_avalon
         public MainWindow()
         {
             InitializeComponent();//loads the window
-            if (GlobalVariables.IsInTimerMode) 
-            {
-                GlobalVariables.Timer.InitializeTimer();//starts the timer
-            }
             UIUpdater();//loads ui
             Activated += MainWindowActivated;//attaches an eventhandler to the activated event
             Closed += MainWindowClosed;//attaches a eventhandler for when the app closes
@@ -44,11 +40,6 @@ namespace albion_avalon
         private void MainWindowActivated(object sender, EventArgs e)
         {
             UIUpdater();//updates the ui
-            if (!GlobalVariables.IsInTimerMode)
-            {
-                TimerManagment.UpdateTime(GlobalVariables.LastUpdateTime,GlobalVariables.VisitedZones);
-                GlobalVariables.LastUpdateTime = DateTime.Now;//sets the last update time to now
-            }
         }
 
         public void UIUpdater()//call to update the ui
@@ -61,7 +52,7 @@ namespace albion_avalon
                 ListOfZones.Children.Add(TemporaryZoneButton);
                 foreach(AlbionPortalDefinition Portal in Zone.ConnectedZones)//then goes through all connected portals and lists their info
                 {
-                    Button TemporaryPortalButton = new Button { Content = Portal.ConnectedZone + "     " + Portal.MinutesTillDecay + "minutes", Margin = new Thickness(50, 0, 0, 0) };
+                    Button TemporaryPortalButton = new Button { Content = Portal.ConnectedZone + "     " + Portal.DespawnTime , Margin = new Thickness(50, 0, 0, 0) };
                     TemporaryPortalButton.Click += PortalButtonClick;//creates a button and attaches an eventhandler
                     ListOfZones.Children.Add(TemporaryPortalButton);
                 }
@@ -77,7 +68,7 @@ namespace albion_avalon
             {
                 foreach (AlbionPortalDefinition Portal in Zone.ConnectedZones.ToList())//then through the portals in each zone
                 {
-                    if(Portal.ConnectedZone + "     " + Portal.MinutesTillDecay + "minutes" == Content)//checks if conent is equal to the values of sender
+                    if(Portal.ConnectedZone + "     " + Portal.DespawnTime == Content)//checks if conent is equal to the values of sender
                     {
                         Zone.ConnectedZones.RemoveAt(Counter);//deletes the item from the list if it is
                         UIUpdater();//updates ui to reflect changes
@@ -106,23 +97,6 @@ namespace albion_avalon
                 Counter++;
             }
             UIUpdater();//updates the change to the ui
-        }
-
-        private void SwitchUpdateMode(object sender, RoutedEventArgs e)
-        {
-            if (GlobalVariables.IsInTimerMode)
-            {
-                GlobalVariables.IsInTimerMode = false;//if in timer mode the timer gets diposed the button renamed and last update time set to now
-                UpdateModeButton.Content = "switch to timer based update mode";
-                GlobalVariables.Timer.StopTimer();
-                GlobalVariables.LastUpdateTime = DateTime.Now;
-            }
-            else
-            {
-                GlobalVariables.IsInTimerMode = true;//if in update mode the timer gets created and started and the button renamed 
-                UpdateModeButton.Content = "switch to foreground based update mode";
-                GlobalVariables.Timer.InitializeTimer();
-            }
         }
 
         private void FinnishInputButtonClick(object sender, RoutedEventArgs e)//event handler for input (attached to the button)
@@ -180,8 +154,8 @@ namespace albion_avalon
         }
         private AlbionPortalDefinition ReadUserInput(string TargetLocationName , string PortalDecayTime)
         {
-            double CurrentConversion;//creates variables for conversions
             DateTime CurrentTime;
+            AlbionPortalDefinition CreatedPortal = new AlbionPortalDefinition();//creates a new portal definition
             try//try catch for invalid inputs
             {
                 CurrentTime = Convert.ToDateTime(PortalDecayTime);//converts from string to datetime
@@ -189,10 +163,12 @@ namespace albion_avalon
             catch
             {
                 CurrentTime = DateTime.MinValue;//if it cant convert it sets the datetime to its minvalue
+                CreatedPortal.DespawnTime = CurrentTime;//adds both the minutes calculated earlier and the string from when the method was called to the definition
+                CreatedPortal.ConnectedZone = TargetLocationName;
+                return CreatedPortal;//returns the definition
             }
-            CurrentConversion = CurrentTime.Hour * 60 + CurrentTime.Minute;//converts from minutes and hours to just minutes
-            AlbionPortalDefinition CreatedPortal = new AlbionPortalDefinition();//creates a new portal definition
-            CreatedPortal.MinutesTillDecay = CurrentConversion;//adds both the minutes calculated earlier and the string from when the method was called to the definition
+            CurrentTime = DateTime.Now.AddHours(CurrentTime.Hour).AddMinutes(CurrentTime.Minute);//ads the given time to now
+            CreatedPortal.DespawnTime = CurrentTime;//adds both the minutes calculated earlier and the string from when the method was called to the definition
             CreatedPortal.ConnectedZone = TargetLocationName;
             return CreatedPortal;//returns the definition
         }

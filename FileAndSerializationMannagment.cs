@@ -76,7 +76,6 @@ namespace albion_avalon
             {
                 return;
             }
-            TimerManagment.UpdateTime(DeserializedData.UpdateTime, DeserializedData.VisitedPlaces);//updates the time on the loaded objekts
             if (DeserializedData.VisitedPlaces == null) return;
             foreach(AlbionZoneDefinition Zone in DeserializedData.VisitedPlaces)
             {
