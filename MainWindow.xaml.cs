@@ -32,6 +32,13 @@ namespace albion_avalon
             }
             UIUpdater();//loads ui
             Activated += MainWindowActivated;//attaches an eventhandler to the activated event
+            Closed += MainWindowClosed;
+            FileAndSerializationMannagment.LoadFromFileAndDeserialize(true);
+        }
+
+        private void MainWindowClosed(object sender, EventArgs e)
+        {
+            FileAndSerializationMannagment.SerializeAndSaveToFile(true);
         }
 
         private void MainWindowActivated(object sender, EventArgs e)
@@ -192,13 +199,13 @@ namespace albion_avalon
 
         private void LoadFromFileButtonClick(object sender, RoutedEventArgs e)
         {
-            FileAndSerializationMannagment.LoadFromFileAndDeserialize();//loads data from file
+            FileAndSerializationMannagment.LoadFromFileAndDeserialize(false);//loads data from file
             UIUpdater();//updates ui
         }
 
         private void SaveToFileButtonClick(object sender, RoutedEventArgs e)
         {
-            FileAndSerializationMannagment.SerializeAndSaveToFile();//saves data to file
+            FileAndSerializationMannagment.SerializeAndSaveToFile(false);//saves data to file
         }
     }
 }

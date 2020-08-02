@@ -11,39 +11,60 @@ namespace albion_avalon
 {
     class FileAndSerializationMannagment
     {
-        public static void SerializeAndSaveToFile()
+        public static void SerializeAndSaveToFile(bool IsInCloseMode)
         {
             string FileName;
             string JsonString;
-            FolderBrowserDialog FileDialog = new FolderBrowserDialog();
             SerializerDataFormat DataToSerialize = new SerializerDataFormat();//initializing variables and objekts
             DataToSerialize.UpdateTime = DateTime.Now;
             DataToSerialize.VisitedPlaces = GlobalVariables.VisitedZones;
-            if(FileDialog.ShowDialog() == DialogResult.OK)//asks user to select a directory path
-            {
-                FileName = FileDialog.SelectedPath;
+            if (!IsInCloseMode) //if were not in close mode we open a folder dialog
+            { 
+                FolderBrowserDialog FileDialog = new FolderBrowserDialog();
+                if (FileDialog.ShowDialog() == DialogResult.OK)//asks user to select a directory path
+                {
+                    FileName = FileDialog.SelectedPath;
+                }
+                else//should the user cancle the selection the method returns
+                {
+                    return;
+                }
+                FileName = FileName + "/" + DateTime.Now.ToString("H mm ss") + "AlbionRoadsData.json";//adds the name of the file
             }
-            else//should the user cancle the selection the method returns
+            else//otherwise we just use appdata
             {
-                return;
+                FileName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/AlbionAvalonianRoadAutoSaveData.json";//if in close mode we write to appdata
             }
             JsonString = JsonSerializer.Serialize(DataToSerialize);//turns the info into json
-            FileName = FileName + "/" + GlobalVariables.LastUpdateTime.Hour + "_" + GlobalVariables.LastUpdateTime.Minute +"_"+GlobalVariables.LastUpdateTime.Second + "AlbionRoadsData.txt";//adds the name of the file
             File.WriteAllText(FileName , JsonString);//writes the file at the specified location
         }
-        public static void LoadFromFileAndDeserialize()
+        public static void LoadFromFileAndDeserialize(bool IsInAutoLoadMode)
         {
             string FileName;
             string JsonString;//initializing variables and objekts
-            Microsoft.Win32.OpenFileDialog FileDialog = new Microsoft.Win32.OpenFileDialog();
-            FileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";//setting filter
-            if(FileDialog.ShowDialog() == true)//asking user to select a txt file
-            {
-                FileName = FileDialog.FileName;
+            if (!IsInAutoLoadMode)
+            { 
+                Microsoft.Win32.OpenFileDialog FileDialog = new Microsoft.Win32.OpenFileDialog();
+                FileDialog.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";//setting filter
+                if (FileDialog.ShowDialog() == true)//asking user to select a json file
+                {
+                    FileName = FileDialog.FileName;
+                }
+                else//should the user cancel the selection the method returns
+                {
+                    return;
+                }
             }
-            else//should the user cancel the selection the method returns
+            else
             {
-                return;
+                if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/AlbionAvalonianRoadAutoSaveData.json"))
+                {
+                    FileName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/AlbionAvalonianRoadAutoSaveData.json";
+                }
+                else
+                {
+                    return;
+                }
             }
             JsonString = File.ReadAllText(FileName);//reads the file
             SerializerDataFormat DeserializedData;//creates objekt for the deserialized data
