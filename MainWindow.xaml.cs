@@ -48,11 +48,13 @@ namespace albion_avalon
             foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones)//goes through all zones
             {
                 Button TemporaryZoneButton = new Button { Content = Zone.ZoneName };
+                TemporaryZoneButton.Tag = Zone.ZoneID;
                 TemporaryZoneButton.Click += ZoneButtonClick;//creates a button and attaches an eventhandler
                 ListOfZones.Children.Add(TemporaryZoneButton);
                 foreach(AlbionPortalDefinition Portal in Zone.ConnectedZones)//then goes through all connected portals and lists their info
                 {
                     Button TemporaryPortalButton = new Button { Content = Portal.ConnectedZone + "     " + Portal.DespawnTime , Margin = new Thickness(50, 0, 0, 0) };
+                    TemporaryPortalButton.Tag = Portal.PortalID + "_" + Zone.ZoneID;
                     TemporaryPortalButton.Click += PortalButtonClick;//creates a button and attaches an eventhandler
                     ListOfZones.Children.Add(TemporaryPortalButton);
                 }
@@ -62,13 +64,12 @@ namespace albion_avalon
         private void PortalButtonClick(object sender, RoutedEventArgs e)
         {
             Button Temporary = (Button)sender;//casts sender to button
-            string Content = (string)Temporary.Content;//casts content to string
             int Counter = 0;
             foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones.ToList())//goes through visitedzones
             {
                 foreach (AlbionPortalDefinition Portal in Zone.ConnectedZones.ToList())//then through the portals in each zone
                 {
-                    if(Portal.ConnectedZone + "     " + Portal.DespawnTime == Content)//checks if conent is equal to the values of sender
+                    if(Convert.ToString(Temporary.Tag) == Portal.PortalID + "_" + Zone.ZoneID)//checks if conent is equal to the values of sender
                     {
                         Zone.ConnectedZones.RemoveAt(Counter);//deletes the item from the list if it is
                         UIUpdater();//updates ui to reflect changes
@@ -84,11 +85,10 @@ namespace albion_avalon
         private void ZoneButtonClick(object sender, RoutedEventArgs e)
         {
             Button Temporary = (Button)sender;//casts sender to button
-            string Content = (string)Temporary.Content;//casts content to string
-            int Counter = 0;//creates counter
+            int Counter = 0;
             foreach(AlbionZoneDefinition Zone in GlobalVariables.VisitedZones.ToList())//goes through visitedzones 
             {
-                if(Zone.ZoneName == Content)//and checks if sender.content is equal to content 
+                if(Convert.ToInt32(Temporary.Tag) == Zone.ZoneID)//and checks if sender.content is equal to content 
                 {
                     GlobalVariables.VisitedZones.RemoveAt(Counter);//deletes the item in the list if it is
                     UIUpdater();//updates ui to reflect changes
@@ -104,33 +104,35 @@ namespace albion_avalon
             AlbionZoneDefinition ToBeAdded = new AlbionZoneDefinition();//creates new zone definition
             ToBeAdded.ConnectedZones = new List<AlbionPortalDefinition>();//adds the list 
             ToBeAdded.ZoneName = ZoneNameBox.Text;//sets the name
+            ToBeAdded.ZoneID = GlobalVariables.ZoneIDCounter;
+            GlobalVariables.ZoneIDCounter++;
             for(int Counter = 1;Counter < 7; Counter++)//loops throuh all textboxes and reads their input
             {
                 switch (Counter)
                 {
                     case 1:
                         if (FirstPortalNameBox.Text == "") continue;//if there is nothing in the name box it continues
-                        ToBeAdded.ConnectedZones.Add(ReadUserInput(FirstPortalNameBox.Text, FirstPortalDecayBox.Text));//otherwise it adds the item to the list
+                        ToBeAdded.ConnectedZones.Add(ReadUserInput(FirstPortalNameBox.Text, FirstPortalDecayBox.Text,1));//otherwise it adds the item to the list
                         break;
                     case 2:
                         if (SecondPortalNameBox.Text == "") continue;
-                        ToBeAdded.ConnectedZones.Add(ReadUserInput(SecondPortalNameBox.Text, SecondPortalDecayBox.Text));
+                        ToBeAdded.ConnectedZones.Add(ReadUserInput(SecondPortalNameBox.Text, SecondPortalDecayBox.Text,2));
                         break;
                     case 3:
                         if (ThirdPortalNameBox.Text == "") continue;
-                        ToBeAdded.ConnectedZones.Add(ReadUserInput(ThirdPortalNameBox.Text, ThirdPortalDecayBox.Text));
+                        ToBeAdded.ConnectedZones.Add(ReadUserInput(ThirdPortalNameBox.Text, ThirdPortalDecayBox.Text,3));
                         break;
                     case 4:
                         if (FourthPortalNameBox.Text == "") continue;
-                        ToBeAdded.ConnectedZones.Add(ReadUserInput(FourthPortalNameBox.Text, FourthPortalDecayBox.Text));
+                        ToBeAdded.ConnectedZones.Add(ReadUserInput(FourthPortalNameBox.Text, FourthPortalDecayBox.Text,4));
                         break;
                     case 5:
                         if (FifthPortalNameBox.Text == "") continue;
-                        ToBeAdded.ConnectedZones.Add(ReadUserInput(FifthPortalNameBox.Text, FifthPortalDecayBox.Text));
+                        ToBeAdded.ConnectedZones.Add(ReadUserInput(FifthPortalNameBox.Text, FifthPortalDecayBox.Text,5));
                         break;
                     case 6:
                         if (SixthPortalNameBox.Text == "") continue;
-                        ToBeAdded.ConnectedZones.Add(ReadUserInput(SixthPortalNameBox.Text, SixthPortalDecayBox.Text));
+                        ToBeAdded.ConnectedZones.Add(ReadUserInput(SixthPortalNameBox.Text, SixthPortalDecayBox.Text,6));
                         break;
                     default:
                         break;
@@ -152,7 +154,7 @@ namespace albion_avalon
             GlobalVariables.VisitedZones.Add(ToBeAdded);//adds the created zone to the list of existing zones
             UIUpdater();//updates the ui to display the newly added data
         }
-        private AlbionPortalDefinition ReadUserInput(string TargetLocationName , string PortalDecayTime)
+        private AlbionPortalDefinition ReadUserInput(string TargetLocationName , string PortalDecayTime,int PortalID)
         {
             DateTime CurrentTime;
             AlbionPortalDefinition CreatedPortal = new AlbionPortalDefinition();//creates a new portal definition
@@ -165,11 +167,13 @@ namespace albion_avalon
                 CurrentTime = DateTime.MinValue;//if it cant convert it sets the datetime to its minvalue
                 CreatedPortal.DespawnTime = CurrentTime;//adds both the minutes calculated earlier and the string from when the method was called to the definition
                 CreatedPortal.ConnectedZone = TargetLocationName;
+                CreatedPortal.PortalID = PortalID;
                 return CreatedPortal;//returns the definition
             }
             CurrentTime = DateTime.Now.AddHours(CurrentTime.Hour).AddMinutes(CurrentTime.Minute);//ads the given time to now
             CreatedPortal.DespawnTime = CurrentTime;//adds both the minutes calculated earlier and the string from when the method was called to the definition
             CreatedPortal.ConnectedZone = TargetLocationName;
+            CreatedPortal.PortalID = PortalID;
             return CreatedPortal;//returns the definition
         }
 

@@ -16,7 +16,7 @@ namespace albion_avalon
             string FileName;
             string JsonString;
             SerializerDataFormat DataToSerialize = new SerializerDataFormat();//initializing variables and objekts
-            DataToSerialize.UpdateTime = DateTime.Now;
+            DataToSerialize.ZoneIdCounter = GlobalVariables.ZoneIDCounter;
             DataToSerialize.VisitedPlaces = GlobalVariables.VisitedZones;
             if (!IsInCloseMode) //if were not in close mode we open a folder dialog
             { 
@@ -75,6 +75,10 @@ namespace albion_avalon
             catch//should the deserializer throw an exeption(for example becouse of invalid json) the method returns
             {
                 return;
+            }
+            if(GlobalVariables.ZoneIDCounter > DeserializedData.ZoneIdCounter && DeserializedData.ZoneIdCounter < 50)//sets the idcounter to the higher one unless the new one is less than 50
+            {
+                GlobalVariables.ZoneIDCounter = DeserializedData.ZoneIdCounter;
             }
             if (DeserializedData.VisitedPlaces == null) return;
             foreach(AlbionZoneDefinition Zone in DeserializedData.VisitedPlaces)
