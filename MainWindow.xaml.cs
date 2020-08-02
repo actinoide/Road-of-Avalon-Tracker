@@ -32,13 +32,13 @@ namespace albion_avalon
             }
             UIUpdater();//loads ui
             Activated += MainWindowActivated;//attaches an eventhandler to the activated event
-            Closed += MainWindowClosed;
-            FileAndSerializationMannagment.LoadFromFileAndDeserialize(true);
+            Closed += MainWindowClosed;//attaches a eventhandler for when the app closes
+            FileAndSerializationMannagment.LoadFromFileAndDeserialize(true);//loads autosave
         }
 
-        private void MainWindowClosed(object sender, EventArgs e)
+        private void MainWindowClosed(object sender, EventArgs e)//called when the window is about to close
         {
-            FileAndSerializationMannagment.SerializeAndSaveToFile(true);
+            FileAndSerializationMannagment.SerializeAndSaveToFile(true);//saves file when the program is about to close
         }
 
         private void MainWindowActivated(object sender, EventArgs e)
