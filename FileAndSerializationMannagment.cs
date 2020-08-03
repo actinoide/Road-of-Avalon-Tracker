@@ -76,9 +76,9 @@ namespace albion_avalon
             {
                 return;
             }
-            if(GlobalVariables.ZoneIDCounter > DeserializedData.ZoneIdCounter && DeserializedData.ZoneIdCounter < 50)//sets the idcounter to the higher one unless the new one is less than 50
+            if(GlobalVariables.ZoneIDCounter < DeserializedData.ZoneIdCounter)//sets the idcounter to the higher one unless the new one is less than 50
             {
-                GlobalVariables.ZoneIDCounter = DeserializedData.ZoneIdCounter;
+                if (!(GlobalVariables.ZoneIDCounter < 500))GlobalVariables.ZoneIDCounter = DeserializedData.ZoneIdCounter;
             }
             if (DeserializedData.VisitedPlaces == null) return;
             foreach(AlbionZoneDefinition Zone in DeserializedData.VisitedPlaces)
