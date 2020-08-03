@@ -29,7 +29,7 @@ namespace albion_avalon
                 {
                     return;
                 }
-                FileName = FileName + "/" + DateTime.Now.ToString("H mm ss") + "AlbionRoadsData.json";//adds the name of the file
+                FileName = FileName + "/" + DateTime.UtcNow.ToString("H mm ss") + "AlbionRoadsData.json";//adds the name of the file
             }
             else//otherwise we just use appdata
             {

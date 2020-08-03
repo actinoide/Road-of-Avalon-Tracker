@@ -170,7 +170,7 @@ namespace albion_avalon
                 CreatedPortal.PortalID = PortalID;
                 return CreatedPortal;//returns the definition
             }
-            CurrentTime = DateTime.Now.AddHours(CurrentTime.Hour).AddMinutes(CurrentTime.Minute);//ads the given time to now
+            CurrentTime = DateTime.UtcNow.AddHours(CurrentTime.Hour).AddMinutes(CurrentTime.Minute);//ads the given time to now
             CreatedPortal.DespawnTime = CurrentTime;//adds both the minutes calculated earlier and the string from when the method was called to the definition
             CreatedPortal.ConnectedZone = TargetLocationName;
             CreatedPortal.PortalID = PortalID;
