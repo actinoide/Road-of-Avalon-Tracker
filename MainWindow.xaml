@@ -15,24 +15,9 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <TextBox Grid.Column="0" Grid.Row="0" x:Name="SearchTextBox" KeyUp="SearchTextBoxKeyUp"/>
-            <Border Panel.ZIndex="1" Height="160" BorderBrush="Black" BorderThickness="1" Grid.Row="1" VerticalAlignment="Top" x:Name="SearchResultBorder" Visibility="Collapsed" Background="White">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="SearchStackPanel"/>
-                </ScrollViewer>
-            </Border>
-            <ScrollViewer Grid.Column="0" Grid.Row="1">
+        <ScrollViewer Grid.Column="0" Grid.Row="1">
                 <StackPanel x:Name="ListOfZones"/>
-            </ScrollViewer>
-        </Grid>
+        </ScrollViewer>
         <StackPanel Grid.Column="1">
             <TextBlock Height="20" Text="Zone Name:"/>
             <TextBlock Height="20" Text="Connected Zone(Decay Time in hh:mm)"/>

@@ -187,24 +187,5 @@ namespace albion_avalon
         {
             FileAndSerializationMannagment.SerializeAndSaveToFile(false);//saves data to file
         }
-
-        private void SearchTextBoxKeyUp(object sender, KeyEventArgs e)
-        {
-            SearchStackPanel.Children.Clear();
-            if (SearchTextBox.Text.Length == 0)
-            {
-                SearchResultBorder.Visibility = Visibility.Collapsed;
-                return;
-            }
-            SearchResultBorder.Visibility = Visibility.Visible;
-            foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones.ToList())
-            {
-                if (Zone.ZoneName.ToLower().Contains(SearchTextBox.Text)) SearchStackPanel.Children.Add(new TextBlock { Text = Zone.ZoneName , Height = 20});
-                foreach(AlbionPortalDefinition Portal in Zone.ConnectedZones.ToList())
-                {
-                    if (Portal.ConnectedZone.ToLower().Contains(SearchTextBox.Text)) SearchStackPanel.Children.Add(new TextBlock { Text = Portal.ConnectedZone + "     " + Portal.DespawnTime , Height = 20});
-                }
-            }
-        }
     }
 }
