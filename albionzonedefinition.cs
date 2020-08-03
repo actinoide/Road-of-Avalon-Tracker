@@ -8,7 +8,7 @@ namespace albion_avalon
     {
         public string ZoneName { get; set; }//name of the zone
         public List<AlbionPortalDefinition> ConnectedZones { get; set; }//list containing one item for each portal in the zone
-        public int ZoneID { get; set; }//id for the zone
+        public uint ZoneID { get; set; }//id for the zone
     }
     public class AlbionPortalDefinition
     {
@@ -18,7 +18,7 @@ namespace albion_avalon
     }
     public class SerializerDataFormat
     {
-        public int ZoneIdCounter { get; set; }
+        public uint ZoneIdCounter { get; set; }
         public List<AlbionZoneDefinition> VisitedPlaces { get; set; }
     }
 }
