@@ -187,5 +187,35 @@ namespace albion_avalon
         {
             FileAndSerializationMannagment.SerializeAndSaveToFile(false);//saves data to file
         }
+
+        private void SearchTextBoxKeyUp(object sender, KeyEventArgs e)//eventhandler for when the user presses a key in the search box
+        {
+            SearchResultStackPanel.Children.Clear();//emptys stackpanel
+            string Query = SearchTextBox.Text.ToLower();//reads the text in the searchbox and converts it to lowercase 
+            bool WriteZone = false;//initializes variable
+            if(Query.Length == 0)//if the length of the query is 0
+            {
+                SearchBorder.Visibility = Visibility.Collapsed;//the border gets hidden
+                return;//and we return
+            }
+            SearchBorder.Visibility = Visibility.Visible;//otherwise the border is visible
+            foreach(AlbionZoneDefinition Zone in GlobalVariables.VisitedZones.ToList())//goes through all zones
+            {
+                if (Zone.ZoneName.ToLower().Contains(Query)) WriteZone = true;//checks if their name contains the query and if  it does seets writezone to true
+                foreach (AlbionPortalDefinition Portal in Zone.ConnectedZones.ToList())//goes through all portals in the zone
+                {
+                    if (Portal.ConnectedZone.ToLower().Contains(Query)) WriteZone = true;//and checks if they contain the query
+                }
+                if(WriteZone == true)//if something in this zone contained the query the entire zone with all portals is written to the stackpanel
+                {
+                    SearchResultStackPanel.Children.Add(new TextBlock { Text = Zone.ZoneName });
+                    foreach (AlbionPortalDefinition Portal in Zone.ConnectedZones.ToList())
+                    {
+                        SearchResultStackPanel.Children.Add(new TextBlock { Text = Portal.ConnectedZone + "     " + Portal.DespawnTime, Margin = new Thickness(50, 0, 0, 0) });
+                    }
+                }
+                WriteZone = false;//resets writezone for the next iteration of the loop
+            }
+        }
     }
 }
