@@ -45,17 +45,26 @@ namespace albion_avalon
         public void UIUpdater()//call to update the ui
         {
             ListOfZones.Children.Clear();
-            foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones)//goes through all zones
+            foreach (AlbionZoneDefinition Zone in GlobalVariables.VisitedZones.ToList())//goes through all zones
             {
+                if (Zone.ConnectedZones.Count == 0 && GlobalVariables.IsInAutoDeleteMode)
+                {
+                    GlobalVariables.VisitedZones.Remove(Zone);//if the zone contains no portals and autodelete is on the zone gets deleted
+                    continue;
+                }
                 Button TemporaryZoneButton = new Button { Content = Zone.ZoneName };
                 TemporaryZoneButton.Tag = Zone.ZoneID;
                 TemporaryZoneButton.Click += ZoneButtonClick;//creates a button and attaches an eventhandler
                 ListOfZones.Children.Add(TemporaryZoneButton);
-                foreach(AlbionPortalDefinition Portal in Zone.ConnectedZones)//then goes through all connected portals and lists their info
+                foreach(AlbionPortalDefinition Portal in Zone.ConnectedZones.ToList())//then goes through all connected portals and lists their info
                 {
                     Button TemporaryPortalButton = new Button { Content = Portal.ConnectedZone + "     " + Portal.DespawnTime , Margin = new Thickness(50, 0, 0, 0) };
                     TemporaryPortalButton.Tag = Portal.PortalID + "_" + Zone.ZoneID;
-                    if (Portal.DespawnTime <= DateTime.UtcNow) TemporaryPortalButton.Foreground = Brushes.Blue;
+                    if (Portal.DespawnTime <= DateTime.UtcNow)
+                    {
+                        if (GlobalVariables.IsInAutoDeleteMode) Zone.ConnectedZones.Remove(Portal);//if the portal has ran out it gets deleted
+                        TemporaryPortalButton.Foreground = Brushes.Blue;
+                    }
                     else if (Portal.DespawnTime <= DateTime.UtcNow.AddMinutes(30)) TemporaryPortalButton.Foreground = Brushes.Red;
                     else if (Portal.DespawnTime <= DateTime.UtcNow.AddHours(1)) TemporaryPortalButton.Foreground = Brushes.Orange;
                     else TemporaryPortalButton.Foreground = Brushes.Green;//sets the color of the text depending on the time till decay
@@ -192,7 +201,7 @@ namespace albion_avalon
             FileAndSerializationMannagment.SerializeAndSaveToFile(false,false);//saves data to file
         }
 
-        private void SearchTextBoxKeyUp(object sender, KeyEventArgs e)//eventhandler for when the user presses a key in the search box
+        private void SearchTextBoxKeyUp(object sender,KeyEventArgs e)//eventhandler for when the user presses a key in the search box
         {
             SearchResultStackPanel.Children.Clear();//emptys stackpanel
             string Query = SearchTextBox.Text.ToLower();//reads the text in the searchbox and converts it to lowercase 
@@ -231,6 +240,19 @@ namespace albion_avalon
         private void SaveToClipboardButtonClick(object sender, RoutedEventArgs e)
         {
             FileAndSerializationMannagment.SerializeAndSaveToFile(false, true);//saves data to clipboard
+        }
+
+        private void AutoDeleteButtonClick(object sender, RoutedEventArgs e)
+        {
+            if(MessageBox.Show("this will imediately delete all expired portals and zones without portals. it will also delete any portals as soon as they expire and any zones as soon as they are empty. this cannot be undone. are you sure ?","warning",MessageBoxButton.YesNo) == MessageBoxResult.Yes)//asks user for confirmation
+            {
+                GlobalVariables.IsInAutoDeleteMode = true;
+            }
+            else
+            {
+                return;
+            }
+            UIUpdater();
         }
     }
 }

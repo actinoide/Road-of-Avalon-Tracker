@@ -53,6 +53,7 @@
             <Button Height="20" Content="save to file" x:Name="SaveToFileButton" Click="SaveToFileButtonClick"/>
             <Button Height="20" Content="load from clipboard" x:Name="LoadFromClipboardButton" Click="LoadFromClipboardButtonClick"/>
             <Button Height="20" Content="save to clipboard" x:Name="SaveToClipboardButton" Click="SaveToClipboardButtonClick"/>
+            <Button Height="20" Content="auto delete portals when they run out" x:Name="AutoDeleteButton" Click="AutoDeleteButtonClick"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
             <TextBox Height="20" x:Name="ZoneNameBox"/>
