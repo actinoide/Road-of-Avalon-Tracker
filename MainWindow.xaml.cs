@@ -55,6 +55,10 @@ namespace albion_avalon
                 {
                     Button TemporaryPortalButton = new Button { Content = Portal.ConnectedZone + "     " + Portal.DespawnTime , Margin = new Thickness(50, 0, 0, 0) };
                     TemporaryPortalButton.Tag = Portal.PortalID + "_" + Zone.ZoneID;
+                    if (Portal.DespawnTime <= DateTime.UtcNow) TemporaryPortalButton.Foreground = Brushes.Blue;
+                    else if (Portal.DespawnTime <= DateTime.UtcNow.AddMinutes(30)) TemporaryPortalButton.Foreground = Brushes.Red;
+                    else if (Portal.DespawnTime <= DateTime.UtcNow.AddHours(1)) TemporaryPortalButton.Foreground = Brushes.Orange;
+                    else TemporaryPortalButton.Foreground = Brushes.Green;//sets the color of the text depending on the time till decay
                     TemporaryPortalButton.Click += PortalButtonClick;//creates a button and attaches an eventhandler
                     ListOfZones.Children.Add(TemporaryPortalButton);
                 }
