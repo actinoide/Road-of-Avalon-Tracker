@@ -29,12 +29,12 @@ namespace albion_avalon
             UIUpdater();//loads ui
             Activated += MainWindowActivated;//attaches an eventhandler to the activated event
             Closed += MainWindowClosed;//attaches a eventhandler for when the app closes
-            FileAndSerializationMannagment.LoadFromFileAndDeserialize(true);//loads autosave
+            FileAndSerializationMannagment.LoadFromFileAndDeserialize(true,false);//loads autosave
         }
 
         private void MainWindowClosed(object sender, EventArgs e)//called when the window is about to close
         {
-            FileAndSerializationMannagment.SerializeAndSaveToFile(true);//saves file when the program is about to close
+            FileAndSerializationMannagment.SerializeAndSaveToFile(true,false);//saves file when the program is about to close
         }
 
         private void MainWindowActivated(object sender, EventArgs e)
@@ -179,13 +179,13 @@ namespace albion_avalon
 
         private void LoadFromFileButtonClick(object sender, RoutedEventArgs e)
         {
-            FileAndSerializationMannagment.LoadFromFileAndDeserialize(false);//loads data from file
+            FileAndSerializationMannagment.LoadFromFileAndDeserialize(false ,false);//loads data from file
             UIUpdater();//updates ui
         }
 
         private void SaveToFileButtonClick(object sender, RoutedEventArgs e)
         {
-            FileAndSerializationMannagment.SerializeAndSaveToFile(false);//saves data to file
+            FileAndSerializationMannagment.SerializeAndSaveToFile(false,false);//saves data to file
         }
 
         private void SearchTextBoxKeyUp(object sender, KeyEventArgs e)//eventhandler for when the user presses a key in the search box
@@ -216,6 +216,17 @@ namespace albion_avalon
                 }
                 WriteZone = false;//resets writezone for the next iteration of the loop
             }
+        }
+
+        private void LoadFromClipboardButtonClick(object sender, RoutedEventArgs e)
+        {
+            FileAndSerializationMannagment.LoadFromFileAndDeserialize(false, true);//loads data from clipboard
+            UIUpdater();//updates the ui
+        }
+
+        private void SaveToClipboardButtonClick(object sender, RoutedEventArgs e)
+        {
+            FileAndSerializationMannagment.SerializeAndSaveToFile(false, true);//saves data to clipboard
         }
     }
 }

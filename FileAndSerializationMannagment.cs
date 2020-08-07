@@ -11,14 +11,15 @@ namespace albion_avalon
 {
     class FileAndSerializationMannagment
     {
-        public static void SerializeAndSaveToFile(bool IsInCloseMode)
+        public static void SerializeAndSaveToFile(bool IsInCloseMode , bool IsInClipboardMode)
         {
-            string FileName;
+            if (IsInClipboardMode && IsInCloseMode) return;//makes sure that only one condition is true
+            string FileName = "";
             string JsonString;
             SerializerDataFormat DataToSerialize = new SerializerDataFormat();//initializing variables and objekts
             DataToSerialize.ZoneIdCounter = GlobalVariables.ZoneIDCounter;
             DataToSerialize.VisitedPlaces = GlobalVariables.VisitedZones;
-            if (!IsInCloseMode) //if were not in close mode we open a folder dialog
+            if (!IsInCloseMode && !IsInClipboardMode) //if were not in close mode or clipboard mode we open a folder dialog
             { 
                 FolderBrowserDialog FileDialog = new FolderBrowserDialog();
                 if (FileDialog.ShowDialog() == DialogResult.OK)//asks user to select a directory path
@@ -31,18 +32,24 @@ namespace albion_avalon
                 }
                 FileName = FileName + "/" + DateTime.UtcNow.ToString("H mm ss") + "AlbionRoadsData.json";//adds the name of the file
             }
-            else//otherwise we just use appdata
+            else if(IsInCloseMode)//otherwise we just use appdata
             {
                 FileName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/AlbionAvalonianRoadAutoSaveData.json";//if in close mode we write to appdata
             }
             JsonString = JsonSerializer.Serialize(DataToSerialize);//turns the info into json
+            if(IsInClipboardMode)//if it is in clipboard mode
+            {
+                Clipboard.SetData(DataFormats.Text, JsonString);//pushes the data into the clipboard
+                return;
+            }
             File.WriteAllText(FileName , JsonString);//writes the file at the specified location
         }
-        public static void LoadFromFileAndDeserialize(bool IsInAutoLoadMode)
+        public static void LoadFromFileAndDeserialize(bool IsInAutoLoadMode , bool IsInClipboardMode)
         {
+            if (IsInAutoLoadMode && IsInClipboardMode) return;//makes sure that only one condition is true
             string FileName;
             string JsonString;//initializing variables and objekts
-            if (!IsInAutoLoadMode)
+            if (!IsInAutoLoadMode && !IsInClipboardMode)
             { 
                 Microsoft.Win32.OpenFileDialog FileDialog = new Microsoft.Win32.OpenFileDialog();
                 FileDialog.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";//setting filter
@@ -54,8 +61,9 @@ namespace albion_avalon
                 {
                     return;
                 }
+                JsonString = File.ReadAllText(FileName);//reads the file
             }
-            else
+            else if(IsInAutoLoadMode)
             {
                 if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/AlbionAvalonianRoadAutoSaveData.json"))
                 {
@@ -65,8 +73,12 @@ namespace albion_avalon
                 {
                     return;
                 }
+                JsonString = File.ReadAllText(FileName);//reads the file
             }
-            JsonString = File.ReadAllText(FileName);//reads the file
+            else//if it is in clipbord mode
+            {
+                JsonString = Clipboard.GetText(TextDataFormat.Text);//it takes the text from the clipboard
+            }
             SerializerDataFormat DeserializedData;//creates objekt for the deserialized data
             try
             {
