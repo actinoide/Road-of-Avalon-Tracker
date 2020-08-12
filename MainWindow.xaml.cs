@@ -244,13 +244,22 @@ namespace albion_avalon
 
         private void AutoDeleteButtonClick(object sender, RoutedEventArgs e)
         {
-            if(MessageBox.Show("this will imediately delete all expired portals and zones without portals. it will also delete any portals as soon as they expire and any zones as soon as they are empty. this cannot be undone. are you sure ?","warning",MessageBoxButton.YesNo) == MessageBoxResult.Yes)//asks user for confirmation
+            if (GlobalVariables.IsInAutoDeleteMode)
             {
-                GlobalVariables.IsInAutoDeleteMode = true;//sets the auto delete variable to true
+                AutoDeleteButton.Content = "auto delete portals when they run out";
+                GlobalVariables.IsInAutoDeleteMode = false;
             }
             else
             {
-                return;
+                if (MessageBox.Show("this will imediately delete all expired portals and zones without portals. it will also delete any portals as soon as they expire and any zones as soon as they are empty. this cannot be undone. are you sure ?", "warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)//asks user for confirmation
+                {
+                    AutoDeleteButton.Content = "turn auto delete off";
+                    GlobalVariables.IsInAutoDeleteMode = true;//sets the auto delete variable to true
+                }
+                else
+                {
+                    return;
+                }
             }
             UIUpdater();//updaes the ui
         }
