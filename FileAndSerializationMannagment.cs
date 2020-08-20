@@ -52,7 +52,7 @@ namespace albion_avalon
             if (!IsInAutoLoadMode && !IsInClipboardMode)
             { 
                 Microsoft.Win32.OpenFileDialog FileDialog = new Microsoft.Win32.OpenFileDialog();
-                FileDialog.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";//setting filter
+                FileDialog.Filter = "json files (*.json)|*.json";//setting filter
                 if (FileDialog.ShowDialog() == true)//asking user to select a json file
                 {
                     FileName = FileDialog.FileName;
